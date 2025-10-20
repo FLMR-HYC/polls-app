@@ -39,13 +39,13 @@ jobs:
       - name: Build and SonarCloud Analyze
         working-directory: polling-app-server
         env:
-          SONAR_TOKEN: 6579d12166a8aebc0a8f1df76732066c22209da4
-
-        run: mvn clean install sonar:sonar \
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=FLMR-HYC_polls-app \
             -Dsonar.organization=flmr-hyc \
             -Dsonar.host.url=https://sonarcloud.io \
-            # -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.login=${SONAR_TOKEN}
 
       # - name: SonarQube Scan
       #   uses: SonarSource/sonarqube-scan-action@v2

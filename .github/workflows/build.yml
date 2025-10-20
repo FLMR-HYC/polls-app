@@ -41,7 +41,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=FLMR-HYC_polls-app
-            -Dsonar.organization=Yuchen_Hua
+            -Dsonar.organization=flmr-hyc
             -Dsonar.host.url=https://sonarcloud.io
         env:
           SONAR_TOKEN: 6579d12166a8aebc0a8f1df76732066c22209da4

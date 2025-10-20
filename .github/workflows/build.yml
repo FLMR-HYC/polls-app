@@ -40,7 +40,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v2
         with:
           args: >
-            -Dsonar.projectKey=flmr-hyc
+            -Dsonar.projectKey=FLMR-HYC_polls-app
             -Dsonar.organization=Yuchen_Hua
             -Dsonar.host.url=https://sonarcloud.io
         env:

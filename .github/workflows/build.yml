@@ -52,6 +52,35 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=$SONAR_TOKEN
 
+      - name: Export SonarCloud report (metrics & issues)
+        if: success() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        working-directory: polling-app-server
+        env:
+          SONAR_TOKEN: 6579d12166a8aebc0a8f1df76732066c22209da4
+        run: |
+          PROJECT=FLMR-HYC_polls-app
+          ORG=flmr-hyc
+          curl -s -H "Authorization: Bearer $SONAR_TOKEN" \
+            "https://sonarcloud.io/api/measures/component?component=$PROJECT&metricKeys=bugs,vulnerabilities,code_smells,coverage,duplicated_lines_density" \
+            -o sonar_measures.json
+          curl -s -H "Authorization: Bearer $SONAR_TOKEN" \
+            "https://sonarcloud.io/api/issues/search?organization=$ORG&componentKeys=$PROJECT&ps=500" \
+            -o sonar_issues.json
+          # 可选：CSV（按需过滤参数）
+          curl -s -H "Authorization: Bearer $SONAR_TOKEN" \
+            "https://sonarcloud.io/api/issues/search?organization=$ORG&componentKeys=$PROJECT&ps=500&additionalFields=_all" \
+            | jq -r '.issues[] | [.key,.rule,.severity,.type,.component,.line,.message] | @csv' > sonar_issues.csv
+
+      - name: Upload SonarCloud report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonarcloud-report
+          path: |
+            polling-app-server/sonar_measures.json
+            polling-app-server/sonar_issues.json
+            polling-app-server/sonar_issues.csv
+
       # - name: SonarQube Scan
       #   uses: SonarSource/sonarqube-scan-action@v2
       #   with:
